@@ -1,0 +1,43 @@
+{
+  "name": "get-comics-downloader",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "imports": {
+    "#src/*": "./src/*",
+    "#models/*": "./src/models/*",
+    "#utils/*": "./src/utils/*",
+    "#types/*": "./src/types/*",
+    "#controllers/*": "./src/controllers/*"
+  },
+  "bin": {
+    "gcw": "./src/run.ts"
+  },
+  "scripts": {
+    "start": "bun run ./src/run.ts",
+    "dev": "bun run ./src/run.ts",
+    "build": "bun build --compile ./src/run.ts --outfile dist/gcw --external electron"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/bun": "latest",
+    "chromium-bidi": "^15.0.0",
+    "eslint": "^10.1.0",
+    "globals": "^17.4.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.57.2",
+    "vite": "^8.0.1"
+  },
+  "dependencies": {
+    "@types/he": "^1.2.3",
+    "@types/node": "^25.5.0",
+    "ansi-colors": "^4.1.3",
+    "commander": "^14.0.3",
+    "dotenv": "^17.3.1",
+    "enquirer": "^2.4.1",
+    "he": "^1.2.0",
+    "p-limit": "^7.3.0",
+    "patchright": "^1.58.2",
+    "tsx": "^4.21.0"
+  }
+}
