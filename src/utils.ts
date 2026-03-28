@@ -1,4 +1,4 @@
-import { SPINNER_FRAMES } from '#src/types';
+import { ENV_VARS, SPINNER_FRAMES, type TGCWEnvVars } from '#src/types';
 import c from "ansi-colors";
 
 /**
@@ -49,4 +49,24 @@ export function spinner(
         process.stdout.write("\r\x1b[2K");
         process.stdout.write("\x1b[?25h");
     };
+}
+
+/**
+ * Checks if all required environment variables are set.
+ * @returns Whether all required environment variables are set.
+ */
+export function envCheck(): boolean {
+    const envValues: Record<TGCWEnvVars, string | undefined> = {
+        API_URL: process.env.API_URL,
+        BASE_URL: process.env.BASE_URL,
+    };
+    const missingVars = Object.keys(envValues).filter(key => !envValues[key]);
+    if (missingVars.length > 0) {
+        console.log(c.red.bold('gcw: Please set the following environment variables:'));
+        missingVars.forEach(key => {
+            console.log(c.red.bold(`gcw: MISSING - ${key} (${ENV_VARS[key]})`));
+        });
+        return false;
+    }
+    return true;
 }

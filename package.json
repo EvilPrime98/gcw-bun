@@ -16,7 +16,7 @@
   "scripts": {
     "start": "bun run ./src/run.ts",
     "dev": "bun run ./src/run.ts",
-    "build": "bun build --compile ./src/run.ts --outfile dist/gcw --external electron"
+    "build": "bun run ./src/build.ts"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -33,7 +33,6 @@
     "@types/node": "^25.5.0",
     "ansi-colors": "^4.1.3",
     "commander": "^14.0.3",
-    "dotenv": "^17.3.1",
     "enquirer": "^2.4.1",
     "he": "^1.2.0",
     "p-limit": "^7.3.0",
