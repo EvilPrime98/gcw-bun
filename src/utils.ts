@@ -1,6 +1,6 @@
-import { ENV_VARS, SPINNER_FRAMES, type TGCWEnvVars } from '#src/types';
+import { type TGCWEnvVars } from '#src/types';
 import c from "ansi-colors";
-
+import { ENV_VARS, SPINNER_FRAMES } from "#src/data.ts";
 /**
  * Returns a string with a maximum length, adding an ellipsis if the string is longer.
  * @param str String to be truncated

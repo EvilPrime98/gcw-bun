@@ -1,5 +1,5 @@
 import type { TDownloadLink, TDownloadModel } from '#src/types';
-import { DOWNLOADS_DIR, CUSTOM_USER_AGENT, REQUEST_DELAY } from '#src/types';
+import { CUSTOM_USER_AGENT, REQUEST_DELAY } from '#src/data';
 import { createWriteStream } from 'fs';
 import { mkdir } from 'fs/promises';
 import { join } from 'path';
@@ -14,12 +14,14 @@ export class DownloadModel implements TDownloadModel {
         link,
         rowIndex = 0,
         totalRows = 1,
-        noRetry = false
+        noRetry = false,
+        outputDir
     }: {
         link: TDownloadLink,
         rowIndex?: number,
         totalRows?: number,
-        noRetry?: boolean
+        noRetry?: boolean,
+        outputDir: string
     }) => {
 
         if (!link.downloadLink) return;
@@ -68,11 +70,11 @@ export class DownloadModel implements TDownloadModel {
             }
 
             const filename = decodeURIComponent(response.url.split('/').pop()!);
-            const dest = join(DOWNLOADS_DIR, filename);
+            const dest = join(outputDir, filename);
             const total = Number(response.headers.get('content-length') ?? 0);
             const totalMB = (total / 1024 / 1024).toFixed(1);
 
-            await mkdir(DOWNLOADS_DIR, { recursive: true });
+            await mkdir(outputDir, { recursive: true });
 
             const reader = response.body!.getReader();
             const fileStream = createWriteStream(dest);
@@ -120,10 +122,12 @@ export class DownloadModel implements TDownloadModel {
 
     downloadComicBundle = async ({
         postLinks,
-        noRetry = false
+        noRetry = false,
+        outputDir
     }: {
         postLinks: TDownloadLink[],
-        noRetry?: boolean
+        noRetry?: boolean,
+        outputDir: string
     }) => {
 
         for (let i = 0; i < postLinks.length; i++) process.stdout.write('\n');
@@ -132,7 +136,8 @@ export class DownloadModel implements TDownloadModel {
                 link: comic,
                 rowIndex: i,
                 totalRows: postLinks.length,
-                noRetry
+                noRetry,
+                outputDir
             })
         ));
 

@@ -1,15 +1,17 @@
-import { type TDownloadType, type TGCWEnv, DEFAULT_ENV, DOWNLOAD_TYPES, MAX_PAGE_INDEX } from '#src/types';
+import { type TDownloadType, type TGCWConfigModel, type TGCWEnv } from '#src/types';
 import { type TPostLink } from '#src/types';
 import { type TGetComicsModel, type TPatchrightModel, type TDownloadModel } from '#src/types';
 import Enquirer from 'enquirer';
 import c from 'ansi-colors';
 import { spinner } from '#src/utils';
+import { DEFAULT_ENV, DOWNLOAD_TYPES, DOWNLOADS_DIR, MAX_PAGE_INDEX } from '#src/data.ts';
 
 const BASE_URL = process.env.BASE_URL || '';
 
 export async function browser({
     search,
     prompt,
+    config,
     getComicsModel,
     patchrightModel,
     downloadModel,
@@ -17,6 +19,7 @@ export async function browser({
 }: {
     search: string,
     prompt: typeof Enquirer.prompt,
+    config: TGCWConfigModel,
     getComicsModel: TGetComicsModel,
     patchrightModel: TPatchrightModel,
     downloadModel: TDownloadModel,
@@ -72,7 +75,8 @@ export async function browser({
 
             await downloadModel.downloadComicBundle({
                 postLinks: downloadLinks,
-                noRetry: env.noRetry
+                noRetry: env.noRetry,
+                outputDir: (await config.getConfig()).defaultOutputDir || DOWNLOADS_DIR
             });
 
         } else if (downloadType === DOWNLOAD_TYPES.single) {
@@ -100,7 +104,8 @@ export async function browser({
                     
                     await downloadModel.downloadComicBundle({
                         postLinks: comics,
-                        noRetry: env.noRetry
+                        noRetry: env.noRetry,
+                        outputDir: (await config.getConfig()).defaultOutputDir || DOWNLOADS_DIR
                     });
 
                 } else {

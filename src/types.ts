@@ -1,13 +1,5 @@
 import type { Browser } from 'patchright';
-import path from 'path';
-
-export const DOWNLOADS_DIR = path.join(process.cwd());
-
-export const CUSTOM_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
-
-export const REQUEST_DELAY = 3 * 1000;
-
-export const MAX_PAGE_INDEX = 10;
+import type { binaryAnswer, DOWNLOAD_TYPES, ENV_VARS, FETCH_MODES, gwcOptions } from './data';
 
 export type TPostLink = {
     id?: number;
@@ -20,19 +12,7 @@ export type TDownloadLink = {
     downloadLink: string|null;
 }
 
-export const binaryAnswer = {
-    'yes': 'yes',
-    'no': 'no'
-}
-
 export type TBinaryAnswer = keyof typeof binaryAnswer;
-
-export const DOWNLOAD_TYPES = {
-    single: 'single',
-    bundle: 'bundle',
-}
-
-export const SPINNER_FRAMES = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"];
 
 export type TDownloadType = keyof typeof DOWNLOAD_TYPES;
 
@@ -57,35 +37,29 @@ export type TDownloadModel = {
         link, 
         rowIndex, 
         totalRows,
-        noRetry
+        noRetry,
+        outputDir
     }:{
         link: TDownloadLink,
         rowIndex?: number,
         totalRows?: number,
-        noRetry?: boolean
+        noRetry?: boolean,
+        outputDir: string
     }) => Promise<void>
     downloadComicBundle: ({
         postLinks, 
-        noRetry
+        noRetry,
+        outputDir
     }:{
         postLinks: TDownloadLink[],
-        noRetry?: boolean
+        noRetry?: boolean,
+        outputDir: string
     }) => Promise<void>
 }
 
 export type TGCWEnv = {
     verbose: boolean,
     noRetry: boolean,
-}
-
-export const DEFAULT_ENV = {
-    verbose: false,
-    noRetry: true,
-}
-
-export const FETCH_MODES = {
-    api: 'api',
-    browser: 'browser',
 }
 
 export type TFetchMode = keyof typeof FETCH_MODES;
@@ -108,9 +82,33 @@ export type TgcwOptions = {
     exact?: boolean,
 }
 
-export const ENV_VARS: Record<string, string> = {
-    API_URL: 'API_URL',
-    BASE_URL: 'BASE_URL',
+export type TGCWEnvVars = keyof typeof ENV_VARS;
+
+export type TGCWConfigModel = {
+    init: () => Promise<TGCWConfigModel>,
+    setConfig: (key: keyof TGCWConfigJSON, value: any) => Promise<any>,
+    getConfig: () => Promise<TGCWConfigJSON>,
 }
 
-export type TGCWEnvVars = keyof typeof ENV_VARS;
+export type TGCWConfigJSON = {
+    /**
+     * Default directory to download comics to. If not set, the current working directory is used.
+     */
+    defaultOutputDir: string,
+    downloadHistory: (TDownloadLink['title'])[]
+}
+
+export type TGCWOptionFactory = {
+    short: string,
+    long: string,
+    argument?: string,
+    description: string,
+    default?: string,
+}
+
+export type TGCWArgumentFactory = {
+    value: string,
+    description: string,
+}
+
+export type TGCWOption = (typeof gwcOptions)[number]['long'];

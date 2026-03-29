@@ -1,18 +1,21 @@
 import { Command } from "commander";
-import { api } from '#controllers/api';
-import { browser } from '#controllers/browser';
+import { api } from '#src/controllers/api/api.ts';
+import { browser } from '#src/controllers/browser/browser.ts';
 import Enquirer from "enquirer";
-import { MAX_PAGE_INDEX, type TDownloadModel, type TGetComicsApiModel, type TGetComicsModel, type TPatchrightModel } from "#src/types.ts";
+import { type TDownloadModel, type TGCWConfigModel, type TGCWOption, type TGetComicsApiModel, type TGetComicsModel, type TPatchrightModel } from "#src/types.ts";
 import c from "ansi-colors";
+import { gwcOptions, gcwArguments } from "#src/data.ts";
 
 export function gcw({
     prompt,
+    config,
     GetComicsApiModel,
     DownloadModel,
     PatchrightModel,
     GetComicsModel,
 }: {
     prompt: typeof Enquirer.prompt,
+    config: TGCWConfigModel,
     GetComicsApiModel: TGetComicsApiModel,
     DownloadModel: TDownloadModel,
     PatchrightModel: TPatchrightModel,
@@ -27,37 +30,46 @@ export function gcw({
         process.exit(1);
     }
 
-    program
-    .option('-a, --api', 'Use the GC wp-json API to fetch and download comics.')
-    .option('-b, --browser', 'Use patched Chrome to fetch and download comics.')
-    .option('-p, --pages <numberofpages>', 'Limit the number of pages to fetch from. Default is 10.', MAX_PAGE_INDEX.toString())
-    .option('-E, --exact', 'Search for exact match.')
-    .argument('[search]', 'Search term to be used.')
-    .action((
-        search: string, 
-        options: { 
-            api?: boolean; 
-            browser?: boolean;
-            pages?: number;
-            exact?: boolean;
-        }
+    gwcOptions.forEach((option) => {
+        program.option(
+            `-${option.short}, --${option.long} ${'argument' in option ? `${option.argument}` : ''}`,
+            option.description,
+            'default' in option ? option.default : undefined
+        );
+    });
+
+    gcwArguments.forEach((argument) => {
+        program.argument(argument.value, argument.description);
+    });
+
+    program.action(async (
+        search: string,
+        options: Record<TGCWOption, string | boolean>
     ) => {
-        
+
+        if (options.output) {
+            const outputDir = options.output;
+            console.log(c.cyan(`gcw: Set default output directory to ${outputDir}.`));
+            await config.setConfig('defaultOutputDir', outputDir);
+            process.exit(0);
+        }
+
         if (!search) {
             noSearchOutput();
             return;
         }
 
-        if (options.api) {
+        if (options.api === true) {
             
             api({
                 search,
                 prompt,
+                config,
                 GetComicsApiModel,
                 DownloadModel,
                 options: {
-                    numofPages: options.pages,
-                    exact: options.exact,
+                    numofPages: Number(options.pages),
+                    exact: Boolean(options.exact),
                 }
             });
 
@@ -69,16 +81,15 @@ export function gcw({
             browser({
                 search,
                 prompt,
+                config,
                 getComicsModel: GetComicsModel,
                 patchrightModel: PatchrightModel,
                 downloadModel: DownloadModel,
             });
 
         } else {
-        
             console.log(c.yellow('gcw: Please specify --api or --browser.'));
             process.exit(1);
-
         }
 
     });
