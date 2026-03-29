@@ -54,6 +54,12 @@ export function gcw({
             process.exit(0);
         }
 
+        if (options.showconfig) {
+            console.log(c.cyan(`gcw: You can edit the configuration file manually in ${config.configPath}`));
+            console.log(c.cyan(`\n${JSON.stringify(await config.getConfig(), null, 4)}`));
+            process.exit(0);
+        }
+
         if (!search) {
             noSearchOutput();
             return;

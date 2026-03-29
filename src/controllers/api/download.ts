@@ -12,11 +12,12 @@ export async function saveDownloadHistory(
     downloadLinks: TDownloadLink[], 
     config: TGCWConfigModel
 ){  
+    console.log(c.white.bold('Saving download history...'));
     const currHistory = (await config.getConfig()).downloadHistory;
     downloadLinks.forEach(link => {
         if (!currHistory.includes(link.title)) currHistory.push(link.title);
     });
-    config.setConfig('downloadHistory', currHistory);
+    await config.setConfig('downloadHistory', currHistory);
 }
 
 /**

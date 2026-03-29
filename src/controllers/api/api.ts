@@ -52,43 +52,38 @@ export async function api({
                 ]
             });
 
-            if (comicIndex.toString() === 'list'){
-
-                const wantsOut = await downloadComicsList(downloadLinks, prompt, DownloadModel, config);
-                if (wantsOut === false) break;            
-                
-            }else if (comicIndex.toString() === 'exit') {
-                
+            if (comicIndex.toString() === 'exit') {
                 console.log(c.white.bold('Bye!'));
                 break;
+            }
 
-            }else if (comicIndex.toString() === 'all'){
-
+            if (comicIndex.toString() === 'list'){
+                const wantsOut = await downloadComicsList(downloadLinks, prompt, DownloadModel, config);
+                if (wantsOut === false) break;
+            }            
+                
+            if (comicIndex.toString() === 'all'){
                 await DownloadModel.downloadComicBundle({
                     postLinks: downloadLinks,
                     noRetry: false,
                     outputDir: (await config.getConfig()).defaultOutputDir || DOWNLOADS_DIR
                 });
-                
                 break;
+            }
 
-            }else {
-
-                const downloadLink = downloadLinks[Number(comicIndex)];
-                if (downloadLink){
-                    await DownloadModel.downloadComic({
-                        link: downloadLink,
-                        rowIndex: 0,
-                        totalRows: 1,
-                        noRetry: false,
-                        outputDir: (await config.getConfig()).defaultOutputDir || DOWNLOADS_DIR
-                    });
-                    await saveDownloadHistory([downloadLink], config);
-                    break;
-                }else{
-                    console.log(c.red.bold('Invalid selection. Please try again.'));
-                }
-
+            const downloadLink = downloadLinks[Number(comicIndex)];
+            if (downloadLink){               
+                await DownloadModel.downloadComic({
+                    link: downloadLink,
+                    rowIndex: 0,
+                    totalRows: 1,
+                    noRetry: false,
+                    outputDir: (await config.getConfig()).defaultOutputDir || DOWNLOADS_DIR
+                });
+                await saveDownloadHistory([downloadLink], config);
+                break;
+            }else{
+                console.log(c.red.bold('Invalid selection. Please try again.'));
             }
 
         }

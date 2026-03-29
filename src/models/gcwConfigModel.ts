@@ -14,6 +14,8 @@ export function gcwConfigModel(): TGCWConfigModel {
     }
 
     const config = {
+
+        configPath,
         
         init: async () => {
             if (!(await Bun.file(configPath).exists())) {

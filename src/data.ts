@@ -41,35 +41,41 @@ export const gwcOptions = [
     { 
         short: 'a', 
         long: 'api', 
-        description: 'Use the GC wp-json API to fetch and download comics.' 
+        description: 'use the GC wp-json API to fetch and download comics.' 
     },
     
     { 
         short: 'b', 
         long: 'browser', 
-        description: 'Use patched Chrome to fetch and download comics.' 
+        description: 'use patched Chrome to fetch and download comics.' 
     },
     
     { 
         short: 'p', 
         long: 'pages',
         argument: '<numberOfPages>',
-        description: 'Limit the number of pages to fetch from.', 
+        description: 'limit the number of pages to fetch from. Every page contains a maximum of 10 element(s).',
         default: MAX_PAGE_INDEX.toString() 
     },
     
     { 
         short: 'E', 
         long: 'exact', 
-        description: 'Search for exact match.' 
+        description: 'search for exact match.' 
     },
 
     { 
         short: 'o', 
         long: 'output',
         argument: '<outputDir>',
-        description: 'Set the output directory for downloaded comics.' 
+        description: `set the output directory for downloaded comics. If not set, the current working directory is used.`
     },
+
+    {
+        short: 'C',
+        long: 'showconfig',
+        description: `display the current configuration`
+    }
 
 ] as const satisfies TGCWOptionFactory[];
 

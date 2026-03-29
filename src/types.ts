@@ -85,6 +85,7 @@ export type TgcwOptions = {
 export type TGCWEnvVars = keyof typeof ENV_VARS;
 
 export type TGCWConfigModel = {
+    configPath: string,
     init: () => Promise<TGCWConfigModel>,
     setConfig: (key: keyof TGCWConfigJSON, value: any) => Promise<any>,
     getConfig: () => Promise<TGCWConfigJSON>,
