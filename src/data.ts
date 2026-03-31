@@ -86,7 +86,7 @@ export const gwcOptions = [
     },
 
     {
-        short: 'C',
+        short: 'S',
         long: 'showconfig',
         description: `displays the current configuration`
     }

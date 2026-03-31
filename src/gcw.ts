@@ -52,7 +52,7 @@ export function gcw({
 
         if (options.defaultoutput) {
             const outputDir = options.defaultoutput;
-            console.log(c.cyan(`gcw: Set default output directory to ${outputDir}.`));
+            console.log(c.cyan(`gcw: Default output directory set to ${outputDir}.`));
             await config.setConfig('defaultOutputDir', outputDir);
             process.exit(0);
         }
@@ -79,7 +79,7 @@ export function gcw({
                 options: {
                     numofPages: Number(options.pages),
                     exact: Boolean(options.exact),
-                    desiredPath: String(options.output),
+                    desiredPath: options.output ? String(options.output) : undefined,
                 }
             });
 

@@ -2,9 +2,9 @@ import { type TDownloadModel, type TGCWConfigModel, type TgcwOptions, type TGetC
 import c from "ansi-colors";
 import Enquirer from "enquirer";
 import { ellipsis } from "#src/utils.ts";
-import { DOWNLOADS_DIR } from "#src/data.ts";
 import { downloadComicsList, saveDownloadHistory } from "#src/controllers/api/download.ts";
 import { initialSearch, searchForDownloadLinks } from "#src/controllers/api/search.ts";
+import path from "path";
 
 /**
  * WP-JSON API-based download functionality.
@@ -28,14 +28,14 @@ export async function api({
     config: TGCWConfigModel,
     GetComicsApiModel: TGetComicsApiModel,
     DownloadModel: TDownloadModel,
-    options?: TgcwOptions,
+    options: TgcwOptions,
 }){
 
     try {
 
-        const downloadPath = (options?.desiredPath)
-        ? options.desiredPath
-        : (await config.getConfig()).defaultOutputDir || DOWNLOADS_DIR;
+        const downloadPath = (options.desiredPath === undefined)
+        ? (await config.getConfig()).defaultOutputDir || path.join(process.cwd())
+        : options.desiredPath;
         
         const postLinks = await initialSearch(search, GetComicsApiModel, options);
         if (postLinks.length === 0) {
