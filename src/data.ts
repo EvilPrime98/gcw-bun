@@ -93,6 +93,17 @@ export const gwcOptions = [
 
 ] as const satisfies TGCWOptionFactory[];
 
+export const SUPPORTED_TARGETS = [
+    "bun-linux-x64",
+    "bun-linux-arm64",
+    "bun-windows-x64",
+    "bun-windows-arm64",
+    "bun-darwin-x64",
+    "bun-darwin-arm64",
+    "bun-linux-x64-musl",
+    "bun-linux-arm64-musl",
+] as const satisfies string[]; //I got these from https://bun.com/docs/bundler/executables :P
+
 export const gcwArguments: TGCWArgumentFactory[] = [
     { value: '[search]', description: 'Search term to be used.' },
 ]
