@@ -2,20 +2,19 @@ import { Command } from "commander";
 import { api } from '#src/controllers/api/api.ts';
 import { browser } from '#src/controllers/browser/browser.ts';
 import Enquirer from "enquirer";
-import { type TDownloadModel, type TGCWConfigModel, type TGCWOption, type TGetComicsApiModel, type TGetComicsModel, type TPatchrightModel } from "#src/types.ts";
+import { type TDownloadModel, type TGCWOption, type TGetComicsApiModel, type TGetComicsModel, type TPatchrightModel } from "#src/types.ts";
 import c from "ansi-colors";
 import { gwcOptions, gcwArguments } from "#src/data.ts";
+import { gcwConfigModel } from "./models/gcwConfigModel";
 
 export function gcw({
     prompt,
-    config,
     GetComicsApiModel,
     DownloadModel,
     PatchrightModel,
     GetComicsModel,
 }: {
     prompt: typeof Enquirer.prompt,
-    config: TGCWConfigModel,
     GetComicsApiModel: TGetComicsApiModel,
     DownloadModel: TDownloadModel,
     PatchrightModel: TPatchrightModel,
@@ -47,6 +46,10 @@ export function gcw({
         options: Record<TGCWOption, string | boolean>
     ) => {
 
+        const config = (options.config)
+        ? await gcwConfigModel(options.config.toString()).init()
+        : await gcwConfigModel().init();
+
         if (options.defaultoutput) {
             const outputDir = options.defaultoutput;
             console.log(c.cyan(`gcw: Set default output directory to ${outputDir}.`));
@@ -54,7 +57,7 @@ export function gcw({
             process.exit(0);
         }
 
-        if (options.showconfig) {
+        if (options.showconfig === true) {
             console.log(c.cyan(`gcw: You can edit the configuration file manually in ${config.configPath}`));
             console.log(c.cyan(`\n${JSON.stringify(await config.getConfig(), null, 4)}`));
             process.exit(0);
@@ -80,7 +83,7 @@ export function gcw({
                 }
             });
 
-        } else if (options.browser) {
+        } else if (options.browser === true) {
 
             console.log(c.red.bold('gcw: This feature is under manteinance and will be available soon.'));
             process.exit(1);

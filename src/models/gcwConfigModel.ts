@@ -2,9 +2,11 @@ import { join } from "path";
 import os from "os";
 import type { TGCWConfigJSON, TGCWConfigModel } from "#src/types.ts";
 
-export function gcwConfigModel(): TGCWConfigModel {
+export function gcwConfigModel(
+    desiredConfigPath?: string
+): TGCWConfigModel {
 
-    const configPath = join(os.homedir(), ".config", "gcw", "config.json");
+    const configPath = desiredConfigPath || join(os.homedir(), ".config", "gcw", "config.json");
 
     const buildConfigContent = (): TGCWConfigJSON => {
         return {
