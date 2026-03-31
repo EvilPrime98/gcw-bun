@@ -64,11 +64,18 @@ export const gwcOptions = [
         description: 'search for exact match.' 
     },
 
-    { 
-        short: 'o', 
+    {
+        short: 'o',
         long: 'output',
         argument: '<outputDir>',
-        description: `set the output directory for downloaded comics. If not set, the current working directory is used.`
+        description: `indicates the output directory for downloaded comics. If not set, the current working directory is used.`
+    },
+
+    { 
+        short: 'O', 
+        long: 'defaultoutput',
+        argument: '<outputDir>',
+        description: `set the output directory for downloaded comics.`
     },
 
     {

@@ -6,6 +6,15 @@ import { DOWNLOADS_DIR } from "#src/data.ts";
 import { downloadComicsList, saveDownloadHistory } from "#src/controllers/api/download.ts";
 import { initialSearch, searchForDownloadLinks } from "#src/controllers/api/search.ts";
 
+/**
+ * WP-JSON API-based download functionality.
+ * @param search The search term entered by the user.
+ * @param prompt An instance of enquirer.prompt.
+ * @param config A valid instance of TGCWConfigModel.
+ * @param GetComicsApiModel A valid instance of TGetComicsApiModel.
+ * @param DownloadModel A valid instance of TDownloadModel.
+ * @param options An object containing the options passed by the user.
+ */
 export async function api({
     search,
     prompt,
@@ -23,6 +32,10 @@ export async function api({
 }){
 
     try {
+
+        const downloadPath = (options?.desiredPath)
+        ? options.desiredPath
+        : (await config.getConfig()).defaultOutputDir || DOWNLOADS_DIR;
         
         const postLinks = await initialSearch(search, GetComicsApiModel, options);
         if (postLinks.length === 0) {
@@ -58,7 +71,12 @@ export async function api({
             }
 
             if (comicIndex.toString() === 'list'){
-                const wantsOut = await downloadComicsList(downloadLinks, prompt, DownloadModel, config);
+                const wantsOut = await downloadComicsList(
+                    downloadLinks, 
+                    prompt, 
+                    DownloadModel, 
+                    downloadPath
+                );
                 if (wantsOut === false) break;
             }            
                 
@@ -66,7 +84,7 @@ export async function api({
                 await DownloadModel.downloadComicBundle({
                     postLinks: downloadLinks,
                     noRetry: false,
-                    outputDir: (await config.getConfig()).defaultOutputDir || DOWNLOADS_DIR
+                    outputDir: downloadPath
                 });
                 break;
             }
@@ -78,14 +96,17 @@ export async function api({
                     rowIndex: 0,
                     totalRows: 1,
                     noRetry: false,
-                    outputDir: (await config.getConfig()).defaultOutputDir || DOWNLOADS_DIR
+                    outputDir: downloadPath
                 });
-                await saveDownloadHistory([downloadLink], config);
+                await saveDownloadHistory(
+                    [downloadLink], 
+                    config
+                );
                 break;
-            }else{
-                console.log(c.red.bold('Invalid selection. Please try again.'));
             }
-
+                
+            console.log(c.red.bold('Invalid selection. Please try again.'));
+            
         }
 
         process.exit(0);

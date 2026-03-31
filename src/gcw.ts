@@ -47,8 +47,8 @@ export function gcw({
         options: Record<TGCWOption, string | boolean>
     ) => {
 
-        if (options.output) {
-            const outputDir = options.output;
+        if (options.defaultoutput) {
+            const outputDir = options.defaultoutput;
             console.log(c.cyan(`gcw: Set default output directory to ${outputDir}.`));
             await config.setConfig('defaultOutputDir', outputDir);
             process.exit(0);
@@ -64,7 +64,7 @@ export function gcw({
             noSearchOutput();
             return;
         }
-
+        
         if (options.api === true) {
             
             api({
@@ -76,6 +76,7 @@ export function gcw({
                 options: {
                     numofPages: Number(options.pages),
                     exact: Boolean(options.exact),
+                    desiredPath: String(options.output),
                 }
             });
 

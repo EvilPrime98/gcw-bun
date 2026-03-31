@@ -1,7 +1,6 @@
 import { type TDownloadLink, type TDownloadModel, type TGCWConfigModel } from "#src/types.ts";
 import type Enquirer from "enquirer";
 import c from "ansi-colors";
-import { DOWNLOADS_DIR } from "#src/data.ts";
 
 /**
  * Saves the download history to the config file.
@@ -25,13 +24,14 @@ export async function saveDownloadHistory(
  * @param downloadLinks An array of TDownloadLink objects.
  * @param prompt An instance of enquirer.prompt.
  * @param DownloadModel A valid instance of TDownloadModel.
+ * @param downloadPath The path to the directory where the comics will be downloaded.
  * @returns Whether the user wants to exit the program.
  */
 export async function downloadComicsList(
     downloadLinks: TDownloadLink[],
     prompt: typeof Enquirer.prompt,
     DownloadModel: TDownloadModel,
-    config: TGCWConfigModel,
+    downloadPath: string
 ): Promise<boolean> {
 
     console.log(c.white.bold('*'.repeat(10)));
@@ -70,7 +70,7 @@ export async function downloadComicsList(
         await DownloadModel.downloadComicBundle({
             postLinks: comicsToDownload,
             noRetry: false,
-            outputDir: (await config.getConfig()).defaultOutputDir || DOWNLOADS_DIR
+            outputDir: downloadPath
         });
     }
 

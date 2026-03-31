@@ -80,6 +80,10 @@ export type TgcwOptions = {
      * If enabled, only pages that match the search term exactly are returned. Default is false.
      */
     exact?: boolean,
+    /**
+     * The desired output directory.
+     */
+    desiredPath?: string,
 }
 
 export type TGCWEnvVars = keyof typeof ENV_VARS;
