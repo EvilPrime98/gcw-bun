@@ -41,7 +41,7 @@ export const gwcOptions = [
     { 
         short: 'a', 
         long: 'api', 
-        description: 'use the GC wp-json API to fetch and download comics.' 
+        description: 'use the GC wp-json API to fetch and download comics. (Default)' 
     },
     
     { 

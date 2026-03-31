@@ -65,7 +65,7 @@ export function gcw({
             return;
         }
         
-        if (options.api === true) {
+        if ((!options.browser && !options.api) || options.api === true) {
             
             api({
                 search,
@@ -94,9 +94,6 @@ export function gcw({
                 downloadModel: DownloadModel,
             });
 
-        } else {
-            console.log(c.yellow('gcw: Please specify --api or --browser.'));
-            process.exit(1);
         }
 
     });
