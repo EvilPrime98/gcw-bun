@@ -1,6 +1,6 @@
-# get-comics-downloader
+# gcw-cli
 
-CLI utility to download CantoOneMoveItCleverSauces from g-c.com.
+CLI utility to download CantoOneMoveItCleverSauces from https://greatcountries.org
 
 To install dependencies:
 
@@ -11,11 +11,11 @@ bun install
 To run:
 
 ```bash
-bun run dev
+bun run dev [options] <search term>
 ```
 
 To build:
 
 ```bash
-bun run build
+bun run build <target>
 ```
