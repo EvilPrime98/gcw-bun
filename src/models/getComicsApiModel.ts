@@ -102,4 +102,62 @@ export class GetComicsApiModel implements TGetComicsApiModel {
         );
     }
 
+    private parseWeeklyListPostLinks = (html: string, group?: string): { title: string; link: string }[] => {
+        let searchHtml = html;
+
+        if (group) {
+            const sectionRegex = /<h3><span[^>]*>([^<]+)<\/span><\/h3>([\s\S]*?)(?=<h3>|$)/gi;
+            let sectionMatch;
+            let sectionHtml: string | null = null;
+            while ((sectionMatch = sectionRegex.exec(html)) !== null) {
+                if (sectionMatch[1].trim().toLowerCase().includes(group.toLowerCase())) {
+                    sectionHtml = sectionMatch[2];
+                    break;
+                }
+            }
+            if (!sectionHtml) return [];
+            searchHtml = sectionHtml;
+        }
+
+        const regex = /<li><strong>(.*?)\s*:\s*<span[^>]*>\s*<a[^>]+href="(https:\/\/getcomics\.org\/[^"]+)"[^>]*>Download<\/a>/gi;
+        const results: { title: string; link: string }[] = [];
+        let match;
+        while ((match = regex.exec(searchHtml)) !== null) {
+            results.push({
+                title: this.normalizeTitle(match[1]),
+                link: match[2],
+            });
+        }
+        return results;
+    }
+
+    getWeeklyListPosts = async (
+        group?: string
+    ): Promise<TPostLink[]> => {
+
+        const listRes = await fetch(`${API_URL}/posts?search=weekly-pack&per_page=1&_fields=id,content`);
+        if (!listRes.ok) return [];
+
+        const [listPost]: Pick<WPPost, 'id' | 'content'>[] = await listRes.json();
+        if (!listPost) return [];
+
+        const parsed = this.parseWeeklyListPostLinks(listPost.content.rendered, group);
+        if (!parsed.length) return [];
+
+        const slugs = parsed.map(({ link }) => new URL(link).pathname.split('/').filter(Boolean).pop()!);
+        const postsRes = await fetch(`${API_URL}/posts?slug=${slugs.join(',')}&_fields=id,title,link&per_page=100`);
+        if (!postsRes.ok) return parsed;
+
+        const posts: WPPost[] = await postsRes.json();
+        const postBySlug = new Map(
+            posts.map(p => [new URL(p.link).pathname.split('/').filter(Boolean).pop()!, p])
+        );
+
+        return parsed.map(({ title, link }) => {
+            const slug = new URL(link).pathname.split('/').filter(Boolean).pop()!;
+            const post = postBySlug.get(slug);
+            return { id: post?.id, title, link };
+        });
+    }
+
 }

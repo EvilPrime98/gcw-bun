@@ -259,6 +259,48 @@ describe('gcw', () => {
 
     });
 
+    describe('--weeklylist / -w', () => {
+
+        test('-w calls api() with weeklyList: true', async () => {
+            const program = createProgram();
+            await program.parseAsync(['-w'], { from: 'user' });
+            expect(mockApiCall).toHaveBeenCalledTimes(1);
+            expect(mockApiCall.mock.calls[0][0].options.weeklyList).toBe(true);
+        });
+
+        test('--weeklylist long flag also works', async () => {
+            const program = createProgram();
+            await program.parseAsync(['--weeklylist'], { from: 'user' });
+            expect(mockApiCall).toHaveBeenCalledTimes(1);
+            expect(mockApiCall.mock.calls[0][0].options.weeklyList).toBe(true);
+        });
+
+        test('-w works without a search term', async () => {
+            const program = createProgram();
+            await program.parseAsync(['-w'], { from: 'user' });
+            expect(mockExitFn).not.toHaveBeenCalled();
+        });
+
+        test('-w <group> passes weeklyListGroup to api()', async () => {
+            const program = createProgram();
+            await program.parseAsync(['-w', 'dc'], { from: 'user' });
+            expect(mockApiCall.mock.calls[0][0].options.weeklyListGroup).toBe('dc');
+        });
+
+        test('--weeklylist <group> long flag also passes weeklyListGroup', async () => {
+            const program = createProgram();
+            await program.parseAsync(['--weeklylist', 'marvel'], { from: 'user' });
+            expect(mockApiCall.mock.calls[0][0].options.weeklyListGroup).toBe('marvel');
+        });
+
+        test('-w does not call browser()', async () => {
+            const program = createProgram();
+            await program.parseAsync(['-w'], { from: 'user' });
+            expect(mockBrowserCall).not.toHaveBeenCalled();
+        });
+
+    });
+
     describe('--config / -c', () => {
 
         test('--config initializes gcwConfigModel with the specified path', async () => {
@@ -280,5 +322,5 @@ describe('gcw', () => {
         });
 
     });
-
+    
 });

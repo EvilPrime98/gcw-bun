@@ -26,6 +26,7 @@ export type TGetComicsApiModel = {
     getPostLinks: (params: { search: string; page?: number|number[]; perPage?: number }) => Promise<TPostLink[]>,
     getDownloadLinkFromPost: (postId: number) => Promise<string | null>,
     getDownloadLinksFromPosts: (postLinks: TPostLink[], limit?: number) => Promise<TDownloadLink[]>,
+    getWeeklyListPosts: (group?: string) => Promise<TPostLink[]>,
 }
 
 export type TPatchrightModel = {
@@ -84,6 +85,14 @@ export type TgcwOptions = {
      * The desired output directory.
      */
     desiredPath?: string,
+    /**
+     * If enabled, it searches for the last weekly list of comics. Default is false. Search term is ignored.
+     */
+    weeklyList?: boolean,
+    /**
+     * Group to search for in the weekly list. Ignored if weeklyList is not enabled.
+     */
+    weeklyListGroup?: string,
 }
 
 export type TGCWEnvVars = keyof typeof ENV_VARS;

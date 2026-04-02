@@ -42,3 +42,18 @@ export async function searchForDownloadLinks(
     stop2();
     return downloadLinks;
 }
+
+/**
+ * Searches for the weekly list of comics.
+ * @param GetComicsApiModel A valid instance of TGetComicsApiModel.
+ * @returns 
+ */
+export async function searchForWeeklyListLinks(
+    GetComicsApiModel: TGetComicsApiModel,
+    group?: string,
+){
+    const stop = spinner(`Searching for weekly list...`);
+    const postLinks = await GetComicsApiModel.getWeeklyListPosts(group);
+    stop();
+    return postLinks;
+}

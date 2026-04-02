@@ -1,9 +1,9 @@
-import { type TDownloadModel, type TGCWConfigModel, type TgcwOptions, type TGetComicsApiModel } from "#src/types.ts";
+import { type TDownloadLink, type TDownloadModel, type TGCWConfigModel, type TgcwOptions, type TGetComicsApiModel, type TPostLink } from "#src/types.ts";
 import c from "ansi-colors";
 import Enquirer from "enquirer";
 import { ellipsis } from "#src/utils.ts";
 import { downloadComicsList, saveDownloadHistory } from "#src/controllers/api/download.ts";
-import { initialSearch, searchForDownloadLinks } from "#src/controllers/api/search.ts";
+import { initialSearch, searchForDownloadLinks, searchForWeeklyListLinks } from "#src/controllers/api/search.ts";
 import path from "path";
 
 /**
@@ -36,20 +36,42 @@ export async function api({
         const downloadPath = (options.desiredPath === undefined)
         ? (await config.getConfig()).defaultOutputDir || path.join(process.cwd())
         : options.desiredPath;
-        
-        const postLinks = await initialSearch(search, GetComicsApiModel, options);
-        if (postLinks.length === 0) {
-            console.log(c.red.bold('No comic(s) found that match the search criteria. Please try again.'));
-            process.exit(0);
-        }
-        console.log(c.cyan(`Found ${postLinks.length} element(s) matching the search criteria.`));
-        
-        const downloadLinks = await searchForDownloadLinks(postLinks, GetComicsApiModel, /*options*/);
-        if (downloadLinks.length === 0) {
-            console.log(c.red.bold('No downloadable comic(s) found.'));
-            process.exit(0);
-        }
 
+        let postLinks: TPostLink[] = [];
+        let downloadLinks: TDownloadLink[] = [];
+
+        if (options.weeklyList === true){
+            
+            postLinks = await searchForWeeklyListLinks(GetComicsApiModel, options.weeklyListGroup);
+            if (postLinks.length === 0) {
+                console.log(c.red.bold('No comic(s) found that match the search criteria. Please try again.'));
+                process.exit(0);
+            }
+            console.log(c.cyan(`Found ${postLinks.length} element(s) matching the search criteria.`));
+
+            downloadLinks = await GetComicsApiModel.getDownloadLinksFromPosts(postLinks);
+            if (downloadLinks.length === 0) {
+                console.log(c.red.bold('No downloadable comic(s) found.'));
+                process.exit(0);
+            }
+
+        }else{
+            
+            postLinks = await initialSearch(search, GetComicsApiModel, options);
+            if (postLinks.length === 0) {
+                console.log(c.red.bold('No comic(s) found that match the search criteria. Please try again.'));
+                process.exit(0);
+            }           
+            console.log(c.cyan(`Found ${postLinks.length} element(s) matching the search criteria.`));
+
+            downloadLinks = await searchForDownloadLinks(postLinks, GetComicsApiModel, /*options*/);
+            if (downloadLinks.length === 0) {
+                console.log(c.red.bold('No downloadable comic(s) found.'));
+                process.exit(0);
+            }
+
+        }
+        
         while (true){
             
             console.log(c.white('*'.repeat(10)));      

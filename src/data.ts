@@ -89,6 +89,13 @@ export const gwcOptions = [
         short: 'S',
         long: 'showconfig',
         description: `displays the current configuration`
+    },
+
+    {
+        short: 'w',
+        long: 'weeklylist',
+        argument: '[group]',
+        description: `displays the weekly list of comics. The search term is ignored. This option is only available for the API mode.`
     }
 
 ] as const satisfies TGCWOptionFactory[];

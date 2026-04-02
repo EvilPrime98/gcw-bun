@@ -63,6 +63,27 @@ export function gcw({
             process.exit(0);
         }
 
+        if (options.weeklylist) {
+            
+            api({
+                search: 'week-pack', //not used
+                prompt,
+                config,
+                GetComicsApiModel,
+                DownloadModel,
+                options: {
+                    numofPages: Number(options.pages),
+                    exact: Boolean(options.exact),
+                    desiredPath: options.output ? String(options.output) : undefined,
+                    weeklyList: true,
+                    weeklyListGroup: options.weeklylist ? String(options.weeklylist) : undefined,
+                }
+            });
+
+            return;
+
+        }
+
         if (!search) {
             noSearchOutput();
             return;
