@@ -58,7 +58,7 @@ export async function api({
                 name: "comicIndex",
                 message: c.cyan("Choose a comic to download:"),
                 choices: [
-                    ...downloadLinks.map((link, index) => ({ name: index.toString(), message: c.white(`· ${link.title} ${ellipsis(link.downloadLink!, 30)}`) })),
+                    ...downloadLinks.map((link, index) => ({ name: index.toString(), message: c.white(`· ${link.title} ${link.downloadLink ? ellipsis(link.downloadLink, 30) : ''}`) })),
                     { name: 'all', message: c.yellowBright.bold('Download all comics') },
                     { name: 'list', message: c.yellowBright.bold('Choose a list of comics to download') },
                     { name: 'exit', message: c.redBright.bold('Exit') }, 
